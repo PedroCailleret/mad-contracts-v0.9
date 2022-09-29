@@ -3,6 +3,7 @@ import {
   loadFixture,
   mine,
 } from "@nomicfoundation/hardhat-network-helpers";
+import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -280,6 +281,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -299,6 +302,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -311,6 +316,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           4,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -335,7 +342,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155MinimalCreated")
-        .withArgs(splAddr, minAddr, acc02.address);
+        .withArgs(splAddr, minAddr, '1155Min', "MIN", 750, 1, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -367,6 +374,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -388,6 +397,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -400,6 +411,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           7,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -424,7 +437,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155BasicCreated")
-        .withArgs(splAddr, basicAddr, acc02.address);
+        .withArgs(splAddr, basicAddr, "1155Basic", "BASIC", 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -456,6 +469,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -475,6 +490,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -487,6 +504,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           30,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -511,7 +530,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155WhitelistCreated")
-        .withArgs(splAddr, wlAddr, acc02.address);
+        .withArgs(splAddr, wlAddr, "1155Whitelist", "WL", 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -540,6 +559,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",
@@ -563,6 +584,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           0,
           0,
           "ipfs://cid/",
@@ -575,6 +598,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           4,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           0,
           0,
           "ipfs://cid/",
@@ -599,7 +624,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155LazyCreated")
-        .withArgs(splAddr, lazyAddr, acc01.address);
+        .withArgs(splAddr, lazyAddr, "1155Lazy", "LAZY", 750, 0, 0);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -712,7 +737,7 @@ describe("MADFactory1155", () => {
         f1155.splitterCheck("", dead, dead, 0, 0),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
-        f1155.createCollection(1, "", 0, 1, "", dead, 750),
+        f1155.createCollection(1, "", "", "", 0, 1, "", dead, 750),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
         f1155.connect(acc02).unpause(),
@@ -742,6 +767,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -753,6 +780,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -764,6 +793,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/",
@@ -807,6 +838,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -861,6 +894,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -875,14 +910,21 @@ describe("MADFactory1155", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
       await min.connect(acc02).publicMint({ value: price });
-      const blocknum = await m1155.provider.getBlockNumber();
+      const blockTimestamp = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
+
+      // const blocknum = await m1155.provider.getBlockNumber();
       await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      await m1155
+      const daTx = await m1155
         .connect(acc02)
-        .fixedPrice(minAddr, 1, 1, price, blocknum + 400);
-      await mine(296);
+        .fixedPrice(minAddr, 1, 1, price, blockTimestamp + 400);
+
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      
+      await setNextBlockTimestamp(blockTimestamp + 296)
+      await mine(daBn + 1);
       const orderID = await m1155.callStatic.orderIdBySeller(
         acc02.address,
         0,
@@ -934,6 +976,8 @@ describe("MADFactory1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",

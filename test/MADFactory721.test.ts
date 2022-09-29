@@ -3,6 +3,7 @@ import {
   loadFixture,
   mine,
 } from "@nomicfoundation/hardhat-network-helpers";
+import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -23,7 +24,7 @@ import {
   Collection,
   SplitterConfig,
   dead,
-  madFixture721A,
+  madFixture721A
 } from "./utils/madFixtures";
 
 describe("MADFactory721", () => {
@@ -344,7 +345,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721MinimalCreated")
-        .withArgs(splAddr, minAddr, acc02.address);
+        .withArgs(splAddr, minAddr, '721Minimal', 'MIN', 750, 1, price);
       await expect(fail1).to.be.revertedWithCustomError(
         m721,
         FactoryErrors.AccessDenied,
@@ -438,7 +439,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721BasicCreated")
-        .withArgs(splAddr, basicAddr, acc02.address);
+        .withArgs(splAddr, basicAddr, '721Basic', 'BASIC', 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -531,7 +532,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721WhitelistCreated")
-        .withArgs(splAddr, wlAddr, acc02.address);
+        .withArgs(splAddr, wlAddr, '721Whitelist', 'WL', 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -625,7 +626,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721LazyCreated")
-        .withArgs(splAddr, lazyAddr, acc01.address);
+        .withArgs(splAddr, lazyAddr, '721Lazy', 'LAZY', 750, ethers.constants.Zero, ethers.constants.Zero);
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -914,12 +915,16 @@ describe("MADFactory721", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
       await min.connect(acc02).publicMint({ value: price });
-      const blocknum = await m721.provider.getBlockNumber();
-      await min.connect(acc02).approve(m721.address, 1);
-      await m721
+      const tx_ = await min.connect(acc02).approve(m721.address, 1);
+      const blockTimestamp = (await m721.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+      const daTx = await m721
         .connect(acc02)
-        .fixedPrice(minAddr, 1, price, blocknum + 400);
-      await mine(296);
+        .fixedPrice(minAddr, 1, price, blockTimestamp + 400);
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      
+      await setNextBlockTimestamp(blockTimestamp + 296);
+      await mine(daBn + 1);
       const orderID = await m721.callStatic.orderIdBySeller(
         acc02.address,
         0,

@@ -20,8 +20,8 @@ export type OrderDetails721 = {
   tokenId: BigNumber;
   startPrice: BigNumber;
   endPrice: BigNumber;
-  startBlock: BigNumber;
-  endBlock: BigNumber;
+  startTime: BigNumber;
+  endTime: BigNumber;
   lastBidPrice: BigNumber;
   lastBidder: string;
   isSold: boolean;
@@ -34,8 +34,8 @@ export type OrderDetails1155 = {
   amount: BigNumber;
   startPrice: BigNumber;
   endPrice: BigNumber;
-  startBlock: BigNumber;
-  endBlock: BigNumber;
+  startTime: BigNumber;
+  endTime: BigNumber;
   lastBidPrice: BigNumber;
   lastBidder: string;
   isSold: boolean;
